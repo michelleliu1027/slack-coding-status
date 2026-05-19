@@ -10,7 +10,7 @@ if [ -z "$SLACK_TOKEN" ]; then
 fi
 
 # Configurable via environment variables
-STATUS_TEXT="${CODING_STATUS_TEXT:-Vibe coding}"
+STATUS_TEXT="${CODING_STATUS_TEXT:-Auto Focus}"
 STATUS_EMOJI="${CODING_STATUS_EMOJI:-:technologist:}"
 EXPIRY_MINUTES="${CODING_STATUS_EXPIRY:-30}"
 

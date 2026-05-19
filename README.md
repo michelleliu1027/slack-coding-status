@@ -80,7 +80,7 @@ All configuration is via environment variables:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `SLACK_STATUS_TOKEN` | (required) | Your Slack User OAuth Token |
-| `CODING_STATUS_TEXT` | `Vibe coding` | Status text shown in Slack |
+| `CODING_STATUS_TEXT` | `Auto Focus` | Status text shown in Slack |
 | `CODING_STATUS_EMOJI` | `:technologist:` | Status emoji |
 | `CODING_STATUS_EXPIRY` | `30` | Auto-expiry in minutes |
 | `CODING_IDLE_THRESHOLD` | `900` | Seconds of inactivity before clearing (default 15 min) |
@@ -103,7 +103,7 @@ slack-status.sh idle     # Clear status
 
 When active, your Slack profile shows:
 
-> 🧑‍💻 Vibe coding · Until 1:30 PM
+> 🧑‍💻 Auto Focus · Until 1:30 PM
 
 ## Platform support
 
