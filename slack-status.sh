@@ -12,20 +12,20 @@ fi
 # Configurable via environment variables
 STATUS_TEXT="${CODING_STATUS_TEXT:-Auto Focus}"
 STATUS_EMOJI="${CODING_STATUS_EMOJI:-:technologist:}"
-EXPIRY_MINUTES="${CODING_STATUS_EXPIRY:-30}"
+EXPIRY_MINUTES="${CODING_STATUS_EXPIRY:-15}"
 
 STATE_FILE="/tmp/.coding-status-active"
 
+NOW=$(date +%s)
+
 case "$1" in
   active)
-    EXPIRATION=$(( $(date +%s) + EXPIRY_MINUTES * 60 ))
-    touch "$STATE_FILE"
+    EXPIRATION=$(( NOW + EXPIRY_MINUTES * 60 ))
     ;;
   idle)
     STATUS_TEXT=""
     STATUS_EMOJI=""
     EXPIRATION=0
-    rm -f "$STATE_FILE"
     ;;
   *)
     echo "Usage: slack-status.sh [active|idle]"
@@ -44,9 +44,16 @@ RESPONSE=$(curl -s -X POST "https://slack.com/api/users.profile.set" \
     }
   }")
 
-if echo "$RESPONSE" | grep -q '"ok":true'; then
-  echo "Status updated: $1"
-else
+if ! echo "$RESPONSE" | grep -q '"ok":true'; then
   echo "Failed to update status: $RESPONSE"
   exit 1
 fi
+
+# Record state only after Slack confirms, so a failed call is retried next poll.
+if [ "$1" = "active" ]; then
+  echo "$NOW" > "$STATE_FILE"
+else
+  rm -f "$STATE_FILE"
+fi
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') status updated: $1"

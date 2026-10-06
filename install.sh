@@ -5,6 +5,9 @@ set -e
 
 INSTALL_DIR="$HOME/.local/bin"
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+POLL_INTERVAL="${CODING_POLL_INTERVAL:-20}"
+AWAY_IDLE="${CODING_AWAY_IDLE:-300}"
+GRACE="${CODING_GRACE:-60}"
 
 echo "=== Slack Coding Status Installer ==="
 echo ""
@@ -63,13 +66,17 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         <string>$INSTALL_DIR/coding-detect.sh</string>
     </array>
     <key>StartInterval</key>
-    <integer>300</integer>
+    <integer>$POLL_INTERVAL</integer>
     <key>RunAtLoad</key>
     <true/>
     <key>EnvironmentVariables</key>
     <dict>
         <key>SLACK_STATUS_TOKEN</key>
         <string>$TOKEN</string>
+        <key>CODING_AWAY_IDLE</key>
+        <string>$AWAY_IDLE</string>
+        <key>CODING_GRACE</key>
+        <string>$GRACE</string>
     </dict>
     <key>StandardOutPath</key>
     <string>/tmp/coding-status.log</string>
@@ -81,17 +88,21 @@ EOF
 
   launchctl unload "$PLIST_FILE" 2>/dev/null || true
   launchctl load "$PLIST_FILE"
-  echo "Installed and started LaunchAgent (runs every 5 minutes)"
+  echo "Installed and started LaunchAgent (polls every ${POLL_INTERVAL}s)"
 fi
 
 echo ""
 echo "=== Done! ==="
 echo ""
 echo "Your Slack status will now automatically update when you're coding."
+echo "  polls every       ${POLL_INTERVAL}s"
+echo "  clears after      ${GRACE}s away from a coding app"
+echo "  clears instantly  on screen lock or ${AWAY_IDLE}s without keyboard/mouse"
 echo ""
 echo "Manual usage:"
-echo "  slack-status.sh active   # Set coding status"
-echo "  slack-status.sh idle     # Clear status"
+echo "  slack-status.sh active    # Set coding status"
+echo "  slack-status.sh idle      # Clear status"
+echo "  coding-detect.sh --debug  # Show what it detects, without calling Slack"
 echo ""
-echo "Optional: Add Claude Code hook for instant updates."
-echo "See README.md for details."
+echo "If the status never sets, run coding-detect.sh --debug and check the"
+echo "front-app line matches CODING_APPS / CODING_BUNDLE_IDS."

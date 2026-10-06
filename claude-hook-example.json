@@ -6,18 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.local/bin/slack-status.sh active",
+            "command": "date +%s > /tmp/.coding-last-active",
             "async": true
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.local/bin/slack-status.sh active"
           }
         ]
       }
